@@ -208,7 +208,7 @@ class ReplayBuffer:
             self._index = (self._index + 1) % self.maxsize
             self._size = min(self._size + 1, self.maxsize)
         to_indices = np.array(to_indices)
-        if self._meta.is_empty():
+        if len(self._meta.get_keys()) == 0:
             self._meta = create_value(buffer._meta, self.maxsize, stack=False)  # type: ignore
         self._meta[to_indices] = buffer._meta[from_indices]
         return to_indices
@@ -284,7 +284,7 @@ class ReplayBuffer:
             batch.done = batch.done.astype(bool)
             batch.terminated = batch.terminated.astype(bool)
             batch.truncated = batch.truncated.astype(bool)
-            if self._meta.is_empty():
+            if len(self._meta.get_keys()) == 0:
                 self._meta = create_value(batch, self.maxsize, stack)  # type: ignore
             else:  # dynamic key pops up in batch
                 alloc_by_keys_diff(self._meta, batch, self.maxsize, stack)
@@ -377,7 +377,7 @@ class ReplayBuffer:
             return np.stack(stack, axis=indices.ndim)
 
         except IndexError as exception:
-            if not (isinstance(val, Batch) and val.is_empty()):
+            if not (isinstance(val, Batch) and len(val.get_keys()) == 0):
                 raise exception  # val != Batch()
             return Batch()
 

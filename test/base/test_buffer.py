@@ -1378,5 +1378,5 @@ def test_custom_key() -> None:
             sampled_batch.__dict__[key],
             Batch,
         ):
-            assert batch.__dict__[key].is_empty()
-            assert sampled_batch.__dict__[key].is_empty()
+            assert len(batch.__dict__[key].get_keys()) == 0
+            assert len(sampled_batch.__dict__[key].get_keys()) == 0

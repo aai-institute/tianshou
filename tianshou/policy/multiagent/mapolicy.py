@@ -272,7 +272,7 @@ class MultiAgentPolicyManager(BasePolicy):
         agent_id_to_stats = {}
         for agent_id, policy in self.policies.items():
             data = batch[agent_id]
-            if not data.is_empty():
+            if len(data.get_keys()) != 0:
                 train_stats = policy.learn(batch=data, **kwargs)
                 agent_id_to_stats[agent_id] = train_stats
         return MapTrainingStats(agent_id_to_stats)
