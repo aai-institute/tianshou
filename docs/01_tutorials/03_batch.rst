@@ -348,7 +348,7 @@ The introduction of reserved keys gives rise to the need to check if a key is re
 
    </details><br>
 
-To check whether a Batch is empty, simply use `len(Batch.get_keys()) == 0` to decide whether to identify direct emptiness (just a ``Batch()``) or `len(Batch) == 0` to identify recursive emptiness (a ``Batch`` object without any scalar/tensor leaf nodes).
+To check whether a Batch is empty, simply use ``len(Batch.get_keys()) == 0`` to decide whether to identify direct emptiness (just a ``Batch()``) or ``len(Batch) == 0`` to identify recursive emptiness (a ``Batch`` object without any scalar/tensor leaf nodes).
 
 .. note::
 
