@@ -50,6 +50,13 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend, p.capti
     display: none;
 }
 
+@media (min-width: 960px) {
+    .bd-page-width {
+        max-width: none !important;
+    }
+}
+
+
 @media screen and (max-width: 768px) {
     .wy-side-nav-search>a img.logo {
         height: 60px;

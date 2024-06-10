@@ -88,8 +88,11 @@ poetry install
 ```
 You can also install the dev requirements by adding `--with dev` or the extras 
 for say mujoco and acceleration by [envpool](https://github.com/sail-sg/envpool)
-by adding `--extras mujoco envpool`
+by adding `--extras "mujoco envpool"`
 
+If you wish to install multiple extras, ensure that you include them in a single command. Sequential calls to `poetry install --extras xxx` will overwrite prior installations, leaving only the last specified extras installed.
+Or you may install all the following extras by adding `--all-extras`. 
+ 
 Available extras are:
 - `atari` (for Atari environments)
 - `box2d` (for Box2D environments)
@@ -147,7 +150,7 @@ Find example scripts in the [test/](https://github.com/thu-ml/tianshou/blob/mast
 ### Comprehensive Functionality
 
 | RL Platform                                                        | GitHub Stars                                                                                                                                    | # of Alg. <sup>(1)</sup> | Custom Env                     | Batch Training                    | RNN Support        | Nested Observation | Backend    |
-| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |--------------------------------| --------------------------------- | ------------------ | ------------------ | ---------- |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ------------------------------ | --------------------------------- | ------------------ | ------------------ | ---------- |
 | [Baselines](https://github.com/openai/baselines)                   | [![GitHub stars](https://img.shields.io/github/stars/openai/baselines)](https://github.com/openai/baselines/stargazers)                         | 9                        | :heavy_check_mark: (gym)       | :heavy_minus_sign: <sup>(2)</sup> | :heavy_check_mark: | :x:                | TF1        |
 | [Stable-Baselines](https://github.com/hill-a/stable-baselines)     | [![GitHub stars](https://img.shields.io/github/stars/hill-a/stable-baselines)](https://github.com/hill-a/stable-baselines/stargazers)           | 11                       | :heavy_check_mark: (gym)       | :heavy_minus_sign: <sup>(2)</sup> | :heavy_check_mark: | :x:                | TF1        |
 | [Stable-Baselines3](https://github.com/DLR-RM/stable-baselines3)   | [![GitHub stars](https://img.shields.io/github/stars/DLR-RM/stable-baselines3)](https://github.com/DLR-RM/stable-baselines3/stargazers)         | 7<sup> (3)</sup>         | :heavy_check_mark: (gym)       | :heavy_minus_sign: <sup>(2)</sup> | :x:                | :heavy_check_mark: | PyTorch    |
