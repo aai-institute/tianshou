@@ -324,35 +324,35 @@ Still, we can use a tree (in the right) to show the structure of ``Batch`` objec
 
     Reserved keys mean that in the future there will eventually be values attached to them. The values can be scalars, tensors, or even **Batch** objects. Understanding this is critical to understand the behavior of ``Batch`` when dealing with heterogeneous Batches.
 
-The introduction of reserved keys gives rise to the need to check if a key is reserved. Tianshou provides ``Batch.is_empty`` to achieve this.
+The introduction of reserved keys gives rise to the need to check if a key is reserved.
 
 .. raw:: html
 
    <details>
-   <summary>Examples of Batch.is_empty</summary>
+   <summary>Examples of checking whether Batch is empty</summary>
 
 .. code-block:: python
 
-    >>> Batch().is_empty()
+    >>> len(Batch().get_keys()) == 0
     True
-    >>> Batch(a=Batch(), b=Batch(c=Batch())).is_empty()
+    >>> len(Batch(a=Batch(), b=Batch(c=Batch())).get_keys()) == 0
     False
-    >>> Batch(a=Batch(), b=Batch(c=Batch())).is_empty(recurse=True)
+    >>> len(Batch(a=Batch(), b=Batch(c=Batch()))) == 0
     True
-    >>> Batch(d=1).is_empty()
+    >>> len(Batch(d=1).get_keys()) == 0
     False
-    >>> Batch(a=np.float64(1.0)).is_empty()
+    >>> len(Batch(a=np.float64(1.0)).get_keys()) == 0
     False
 
 .. raw:: html
 
    </details><br>
 
-The ``Batch.is_empty`` function has an option to decide whether to identify direct emptiness (just a ``Batch()``) or to identify recursive emptiness (a ``Batch`` object without any scalar/tensor leaf nodes).
+To check whether a Batch is empty, simply use ``len(Batch.get_keys()) == 0`` to decide whether to identify direct emptiness (just a ``Batch()``) or ``len(Batch) == 0`` to identify recursive emptiness (a ``Batch`` object without any scalar/tensor leaf nodes).
 
 .. note::
 
-    Do not get confused with ``Batch.is_empty`` and ``Batch.empty``. ``Batch.empty`` and its in-place variant ``Batch.empty_`` are used to set some values to zeros or None. Check the API documentation for further details.
+    Do not get confused with ``Batch.empty``. ``Batch.empty`` and its in-place variant ``Batch.empty_`` are used to set some values to zeros or None. Check the API documentation for further details.
 
 
 Length and Shape

@@ -15,15 +15,15 @@ from tianshou.data import Batch, to_numpy, to_torch
 
 def test_batch() -> None:
     assert list(Batch()) == []
-    assert Batch().is_empty()
-    assert not Batch(b={"c": {}}).is_empty()
-    assert Batch(b={"c": {}}).is_empty(recurse=True)
-    assert not Batch(a=Batch(), b=Batch(c=Batch())).is_empty()
-    assert Batch(a=Batch(), b=Batch(c=Batch())).is_empty(recurse=True)
-    assert not Batch(d=1).is_empty()
-    assert not Batch(a=np.float64(1.0)).is_empty()
+    assert len(Batch().get_keys()) == 0
+    assert len(Batch(b={"c": {}}).get_keys()) != 0
+    assert len(Batch(b={"c": {}})) == 0
+    assert len(Batch(a=Batch(), b=Batch(c=Batch())).get_keys()) != 0
+    assert len(Batch(a=Batch(), b=Batch(c=Batch()))) == 0
+    assert len(Batch(d=1).get_keys()) != 0
+    assert len(Batch(a=np.float64(1.0)).get_keys()) != 0
     assert len(Batch(a=[1, 2, 3], b={"c": {}})) == 3
-    assert not Batch(a=[1, 2, 3]).is_empty()
+    assert len(Batch(a=[1, 2, 3]).get_keys()) != 0
     b = Batch({"a": [4, 4], "b": [5, 5]}, c=[None, None])
     assert b.c.dtype == object
     b = Batch(d=[None], e=[starmap], f=Batch)
@@ -31,7 +31,7 @@ def test_batch() -> None:
     assert b.f == Batch
     b = Batch()
     b.update()
-    assert b.is_empty()
+    assert len(b.get_keys()) == 0
     b.update(c=[3, 5])
     assert np.allclose(b.c, [3, 5])
     # mimic the behavior of dict.update, where kwargs can overwrite keys
@@ -141,7 +141,7 @@ def test_batch() -> None:
     assert batch2_sum.a.b == (batch2.a.b + 1.0) * 2
     assert batch2_sum.a.c == (batch2.a.c + 1.0) * 2
     assert batch2_sum.a.d.e == (batch2.a.d.e + 1.0) * 2
-    assert batch2_sum.a.d.f.is_empty()
+    assert len(batch2_sum.a.d.f.get_keys()) == 0
     with pytest.raises(TypeError):
         batch2 += [1]  # type: ignore  # error is raised explicitly
     batch3 = Batch(a={"c": np.zeros(1), "d": Batch(e=np.array([0.0]), f=np.array([3.0]))})
@@ -255,7 +255,7 @@ def test_batch_cat_and_stack() -> None:
     ans = Batch.cat([a, b, a])
     assert np.allclose(ans.a.a, np.concatenate([a.a.a, np.zeros((3, 4)), a.a.a]))
     assert np.allclose(ans.b, np.concatenate([a.b, b.b, a.b]))
-    assert ans.a.t.is_empty()
+    assert len(ans.a.t.get_keys()) == 0
 
     b1.stack_([b2])
     assert isinstance(b1.a.d.e, np.ndarray)
@@ -296,7 +296,7 @@ def test_batch_cat_and_stack() -> None:
         b=torch.cat([torch.zeros(3, 3), b2.b]),
         common=Batch(c=np.concatenate([b1.common.c, b2.common.c])),
     )
-    assert ans.a.is_empty()
+    assert len(ans.a.get_keys()) == 0
     assert torch.allclose(test.b, ans.b)
     assert np.allclose(test.common.c, ans.common.c)
 
@@ -325,7 +325,7 @@ def test_batch_cat_and_stack() -> None:
     assert np.allclose(d.d, [0, 6, 9])
 
     # test stack with empty Batch()
-    assert Batch.stack([Batch(), Batch(), Batch()]).is_empty()
+    assert len(Batch.stack([Batch(), Batch(), Batch()]).get_keys()) == 0
     a = Batch(a=1, b=2, c=3, d=Batch(), e=Batch())
     b = Batch(a=4, b=5, d=6, e=Batch())
     c = Batch(c=7, b=6, d=9, e=Batch())
@@ -334,12 +334,12 @@ def test_batch_cat_and_stack() -> None:
     assert np.allclose(d.b, [2, 5, 6])
     assert np.allclose(d.c, [3, 0, 7])
     assert np.allclose(d.d, [0, 6, 9])
-    assert d.e.is_empty()
+    assert len(d.e.get_keys()) == 0
     b1 = Batch(a=Batch(), common=Batch(c=np.random.rand(4, 5)))
     b2 = Batch(b=Batch(), common=Batch(c=np.random.rand(4, 5)))
     test = Batch.stack([b1, b2], axis=-1)
-    assert test.a.is_empty()
-    assert test.b.is_empty()
+    assert len(test.a.get_keys()) == 0
+    assert len(test.b.get_keys()) == 0
     assert np.allclose(test.common.c, np.stack([b1.common.c, b2.common.c], axis=-1))
 
     b1 = Batch(a=np.random.rand(4, 4), common=Batch(c=np.random.rand(4, 5)))
@@ -362,9 +362,9 @@ def test_batch_cat_and_stack() -> None:
 
     # exceptions
     batch_cat: Batch = Batch.cat([])
-    assert batch_cat.is_empty()
+    assert len(batch_cat.get_keys()) == 0
     batch_stack: Batch = Batch.stack([])
-    assert batch_stack.is_empty()
+    assert len(batch_stack.get_keys()) == 0
     b1 = Batch(e=[4, 5], d=6)
     b2 = Batch(e=[4, 6])
     with pytest.raises(ValueError):

@@ -29,7 +29,7 @@ class ReplayBufferManager(ReplayBuffer):
         buffer_type = type(self.buffers[0])
         kwargs = self.buffers[0].options
         for buf in self.buffers:
-            assert buf._meta.is_empty()
+            assert len(buf._meta.get_keys()) == 0
             assert isinstance(buf, buffer_type)
             assert buf.options == kwargs
             offset.append(size)
@@ -161,7 +161,7 @@ class ReplayBufferManager(ReplayBuffer):
             batch.done = batch.done.astype(bool)
             batch.terminated = batch.terminated.astype(bool)
             batch.truncated = batch.truncated.astype(bool)
-            if self._meta.is_empty():
+            if len(self._meta.get_keys()) == 0:
                 self._meta = create_value(batch, self.maxsize, stack=False)  # type: ignore
             else:  # dynamic key pops up in batch
                 alloc_by_keys_diff(self._meta, batch, self.maxsize, False)
